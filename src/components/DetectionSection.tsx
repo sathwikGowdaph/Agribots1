@@ -1,19 +1,45 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Upload, Scan, CheckCircle, AlertTriangle, Lightbulb, Volume2 } from 'lucide-react';
+import { Camera, Upload, Scan, CheckCircle, AlertTriangle, Lightbulb, Volume2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { getRandomDisease } from '@/data/diseases';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface DetectionSectionProps {
   translations: any;
   currentLanguage: string;
 }
 
+interface DetectionResult {
+  crop: string;
+  issue: string;
+  category: string;
+  severity: string;
+  confidence: string;
+  description: {
+    english: string;
+    hindi: string;
+    kannada: string;
+  };
+  solutions: {
+    english: string;
+    hindi: string;
+    kannada: string;
+  };
+  tts: {
+    english: string;
+    hindi: string;
+    kannada: string;
+  };
+  preventive_tips: string;
+  timestamp: string;
+}
+
 const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, currentLanguage }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
-  const [detectionResult, setDetectionResult] = useState<any>(null);
+  const [detectionResult, setDetectionResult] = useState<DetectionResult | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,67 +60,54 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
     
     setIsDetecting(true);
     
-    // Mock detection result using comprehensive disease database - in real app, this would call AI service
-    setTimeout(() => {
-      const randomDisease = getRandomDisease();
-      setDetectionResult(randomDisease);
+    try {
+      console.log('Sending image for AI detection...');
+      
+      const { data, error } = await supabase.functions.invoke('detect-disease', {
+        body: { imageData: selectedImage }
+      });
+
+      if (error) {
+        console.error('Detection error:', error);
+        toast.error('Detection failed. Please try again.');
+        return;
+      }
+
+      console.log('Detection result:', data);
+      setDetectionResult(data as DetectionResult);
+      toast.success(`🌱 Detected: ${data.issue} in ${data.crop}`);
+      
+    } catch (error) {
+      console.error('Error during detection:', error);
+      toast.error('An error occurred. Please try again.');
+    } finally {
       setIsDetecting(false);
-    }, 2000);
+    }
   };
 
   const openCamera = () => {
     // Mock camera functionality - in real app, this would open device camera
-    alert("Camera functionality would open here. For demo, please use upload instead.");
-  };
-
-  const generateMultilingualText = (result: any): { en: string; hi: string; kn: string } => {
-    const disease = {
-      en: typeof result.disease === 'string' ? result.disease : result.disease.en,
-      hi: typeof result.disease === 'string' ? result.disease : result.disease.hi,
-      kn: typeof result.disease === 'string' ? result.disease : result.disease.kn,
-    };
-    const crop = {
-      en: typeof result.crop === 'string' ? result.crop : result.crop.en,
-      hi: typeof result.crop === 'string' ? result.crop : result.crop.hi,
-      kn: typeof result.crop === 'string' ? result.crop : result.crop.kn,
-    };
-    const treatment = {
-      en: typeof result.treatment === 'string' ? result.treatment : result.treatment.en,
-      hi: typeof result.treatment === 'string' ? result.treatment : result.treatment.hi,
-      kn: typeof result.treatment === 'string' ? result.treatment : result.treatment.kn,
-    };
-    const prevention = {
-      en: typeof result.prevention === 'string' ? result.prevention : result.prevention.en,
-      hi: typeof result.prevention === 'string' ? result.prevention : result.prevention.hi,
-      kn: typeof result.prevention === 'string' ? result.prevention : result.prevention.kn,
-    };
-
-    return {
-      en: `Problem: ${disease.en} in ${crop.en}. Treatment: ${treatment.en}. Prevention: ${prevention.en}`,
-      hi: `समस्या: ${crop.hi} में ${disease.hi}. उपचार: ${treatment.hi}. रोकथाम: ${prevention.hi}`,
-      kn: `ನಿಮ್ಮ ${crop.kn} ಗೆ ${disease.kn} ಸಮಸ್ಯೆ ಇದೆ. ಚಿಕಿತ್ಸೆ: ${treatment.kn}. ತಡೆಗಟ್ಟುವುದು ಹೇಗೆ: ${prevention.kn}`,
-    };
+    toast.info("Camera functionality coming soon. Please use upload for now.");
   };
 
   const handleSpeak = () => {
     if (!detectionResult || isSpeaking) return;
 
-    // Generate multilingual text object
-    const multilingualText = generateMultilingualText(detectionResult);
-    
-    // Select text based on current language
-    const textToSpeak = multilingualText[currentLanguage as keyof typeof multilingualText] || multilingualText.en;
+    const langKey = currentLanguage as 'english' | 'hindi' | 'kannada';
+    const textToSpeak = detectionResult.tts[langKey] || detectionResult.tts.english;
 
-    // Use browser's speech synthesis
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     
     const langCodes: { [key: string]: string } = {
       en: 'en-US',
+      english: 'en-US',
       hi: 'hi-IN',
-      kn: 'kn-IN'
+      hindi: 'hi-IN',
+      kn: 'kn-IN',
+      kannada: 'kn-IN'
     };
     utterance.lang = langCodes[currentLanguage] || 'en-US';
-    utterance.rate = 0.85; // Slower for farmer-friendly clarity
+    utterance.rate = 0.85;
     utterance.pitch = 1.0;
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -103,9 +116,16 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
 
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
+  };
 
-    // Log the multilingual JSON (can be sent to TTS API)
-    console.log('Multilingual TTS Payload:', JSON.stringify(multilingualText, null, 2));
+  const getDescriptionText = (result: DetectionResult): string => {
+    const langKey = currentLanguage === 'en' ? 'english' : currentLanguage === 'hi' ? 'hindi' : 'kannada';
+    return result.description[langKey];
+  };
+
+  const getSolutionsText = (result: DetectionResult): string => {
+    const langKey = currentLanguage === 'en' ? 'english' : currentLanguage === 'hi' ? 'hindi' : 'kannada';
+    return result.solutions[langKey];
   };
 
   return (
@@ -128,7 +148,7 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Scan className="h-5 w-5 text-primary" />
-                  Upload Crop Image
+                  🌿 Upload Crop Image
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -198,8 +218,8 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
                   >
                     {isDetecting ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
-                        Analyzing...
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        🔬 Analyzing with AI...
                       </>
                     ) : (
                       <>
@@ -217,7 +237,7 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-success" />
-                  {translations.detection.results.title}
+                  📊 {translations.detection.results.title}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -227,10 +247,10 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="text-xl font-semibold text-foreground">
-                          {typeof detectionResult.disease === 'string' ? detectionResult.disease : detectionResult.disease[translations.lang || 'en']}
+                          🪲 {detectionResult.issue}
                         </h3>
                         <Badge 
-                          variant={detectionResult.confidence > 90 ? "default" : "secondary"}
+                          variant={parseInt(detectionResult.confidence) > 90 ? "default" : "secondary"}
                           className="text-sm"
                         >
                           {detectionResult.confidence}% {translations.detection.results.confidence}
@@ -246,27 +266,42 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
                         className="w-full"
                       >
                         <Volume2 className={`h-4 w-4 mr-2 ${isSpeaking ? 'animate-pulse' : ''}`} />
-                        {isSpeaking ? 'Speaking...' : 'Listen to Explanation'}
+                        {isSpeaking ? '🔊 Speaking...' : '🔊 Listen to Explanation'}
                       </Button>
                       
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">Crop:</span>
-                        <span className="font-medium">{typeof detectionResult.crop === 'string' ? detectionResult.crop : detectionResult.crop[translations.lang || 'en']}</span>
-                        <span className="text-sm text-muted-foreground">Severity:</span>
-                        <Badge variant={detectionResult.severity === 'High' ? 'destructive' : 'secondary'}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm text-muted-foreground">🌾 Crop:</span>
+                        <span className="font-medium">{detectionResult.crop}</span>
+                        <span className="text-sm text-muted-foreground">⚠️ Severity:</span>
+                        <Badge variant={detectionResult.severity === 'High' ? 'destructive' : detectionResult.severity === 'Medium' ? 'secondary' : 'default'}>
                           {detectionResult.severity}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">📂 Type:</span>
+                        <Badge variant="outline">
+                          {detectionResult.category}
                         </Badge>
                       </div>
                     </div>
 
-                    {/* Treatment */}
+                    {/* Description */}
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-foreground flex items-center gap-2">
+                        <Scan className="h-4 w-4 text-primary" />
+                        🔍 What We Detected
+                      </h4>
+                      <div className="text-sm text-muted-foreground bg-primary/5 p-3 rounded-lg whitespace-pre-line">
+                        {getDescriptionText(detectionResult)}
+                      </div>
+                    </div>
+
+                    {/* Solutions */}
                     <div className="space-y-2">
                       <h4 className="font-semibold text-foreground flex items-center gap-2">
                         <AlertTriangle className="h-4 w-4 text-warning" />
-                        {translations.detection.results.treatment}
+                        💊 Treatment & Solutions
                       </h4>
                       <div className="text-sm text-muted-foreground bg-warning/10 p-3 rounded-lg whitespace-pre-line">
-                        {typeof detectionResult.treatment === 'string' ? detectionResult.treatment : detectionResult.treatment[translations.lang || 'en']}
+                        {getSolutionsText(detectionResult)}
                       </div>
                     </div>
 
@@ -274,18 +309,23 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
                     <div className="space-y-2">
                       <h4 className="font-semibold text-foreground flex items-center gap-2">
                         <Lightbulb className="h-4 w-4 text-accent" />
-                        {translations.detection.results.prevention}
+                        🛡️ Prevention Tips
                       </h4>
                       <div className="text-sm text-muted-foreground bg-accent/10 p-3 rounded-lg whitespace-pre-line">
-                        {typeof detectionResult.prevention === 'string' ? detectionResult.prevention : detectionResult.prevention[translations.lang || 'en']}
+                        {detectionResult.preventive_tips}
                       </div>
+                    </div>
+
+                    {/* Timestamp */}
+                    <div className="text-xs text-muted-foreground text-center pt-2 border-t">
+                      ⏰ Detected at: {new Date(detectionResult.timestamp).toLocaleString()}
                     </div>
                   </div>
                 ) : (
                   <div className="text-center py-12">
                     <Scan className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
                     <p className="text-muted-foreground">
-                      Upload an image and click detect to see results here.
+                      Upload an image and click detect to see AI-powered results here.
                     </p>
                   </div>
                 )}
