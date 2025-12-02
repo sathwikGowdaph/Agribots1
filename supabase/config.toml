@@ -2,3 +2,6 @@ project_id = "jvdiubghenrbjsytuncp"
 
 [functions.agribot-chat]
 verify_jwt = false
+
+[functions.detect-disease]
+verify_jwt = false
