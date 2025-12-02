@@ -14,13 +14,148 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      community_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_posts: {
+        Row: {
+          comments_count: number
+          created_at: string
+          crop_type: string | null
+          description: string
+          id: string
+          image_url: string
+          issue_detected: string | null
+          likes_count: number
+          moderation_note: string | null
+          solutions: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comments_count?: number
+          created_at?: string
+          crop_type?: string | null
+          description: string
+          id?: string
+          image_url: string
+          issue_detected?: string | null
+          likes_count?: number
+          moderation_note?: string | null
+          solutions?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comments_count?: number
+          created_at?: string
+          crop_type?: string | null
+          description?: string
+          id?: string
+          image_url?: string
+          issue_detected?: string | null
+          likes_count?: number
+          moderation_note?: string | null
+          solutions?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      detection_history: {
+        Row: {
+          created_at: string
+          detection_result: Json
+          id: string
+          image_url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          detection_result: Json
+          id?: string
+          image_url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          detection_result?: Json
+          id?: string
+          image_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_old_detection_history: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
