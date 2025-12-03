@@ -46,7 +46,7 @@ const Index = () => {
           </div>
         </section>
         
-        <CommunitySection translations={currentTranslations} />
+        <CommunitySection translations={currentTranslations} currentLanguage={currentLanguage} />
         
         <FeaturesSection translations={currentTranslations} />
       </main>

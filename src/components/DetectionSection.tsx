@@ -390,40 +390,35 @@ const DetectionSection: React.FC<DetectionSectionProps> = ({ translations, curre
                       </div>
                     </div>
 
-                    {/* Description - Current Language */}
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-foreground flex items-center gap-2 text-base">
-                        <Scan className="h-5 w-5 text-primary" />
-                        🔍 What We Detected
-                      </h4>
-                      <div className="text-sm bg-muted/50 p-4 rounded-xl whitespace-pre-line leading-relaxed">
-                        {currentLanguage === 'en' && detectionResult.description.english}
-                        {currentLanguage === 'hi' && detectionResult.description.hindi}
-                        {currentLanguage === 'kn' && detectionResult.description.kannada}
+                    {/* TRILINGUAL RESULTS - ALL 3 LANGUAGES */}
+                    
+                    {/* 🟢 ENGLISH Section */}
+                    <div className="space-y-2 border-l-4 border-green-500 pl-3 bg-green-50 dark:bg-green-950/20 p-3 rounded-r-xl">
+                      <h4 className="font-bold text-green-700 dark:text-green-400 text-base">🟢 English</h4>
+                      <div className="space-y-1 text-sm">
+                        <p><span className="font-semibold">🔍 What We Detected:</span> {detectionResult.description.english}</p>
+                        <p><span className="font-semibold">💊 Treatment & Solutions:</span> {detectionResult.solutions.english}</p>
+                        <p><span className="font-semibold">🛡️ Prevention Tips:</span> General Prevention: Crop rotation, proper spacing, field hygiene, resistant varieties.</p>
                       </div>
                     </div>
 
-                    {/* Solutions - Current Language */}
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-foreground flex items-center gap-2 text-base">
-                        <AlertTriangle className="h-5 w-5 text-warning" />
-                        💊 Treatment & Solutions
-                      </h4>
-                      <div className="text-sm bg-warning/10 p-4 rounded-xl whitespace-pre-line leading-relaxed border-l-4 border-warning">
-                        {currentLanguage === 'en' && detectionResult.solutions.english}
-                        {currentLanguage === 'hi' && detectionResult.solutions.hindi}
-                        {currentLanguage === 'kn' && detectionResult.solutions.kannada}
+                    {/* 🟣 KANNADA Section */}
+                    <div className="space-y-2 border-l-4 border-purple-500 pl-3 bg-purple-50 dark:bg-purple-950/20 p-3 rounded-r-xl">
+                      <h4 className="font-bold text-purple-700 dark:text-purple-400 text-base">🟣 ಕನ್ನಡ (Kannada)</h4>
+                      <div className="space-y-1 text-sm">
+                        <p><span className="font-semibold">🔍 ಪತ್ತೆ ಮಾಡಲಾದ ಸಮಸ್ಯೆ:</span> {detectionResult.description.kannada}</p>
+                        <p><span className="font-semibold">💊 ಚಿಕಿತ್ಸೆ ಮತ್ತು ಪರಿಹಾರಗಳು:</span> {detectionResult.solutions.kannada}</p>
+                        <p><span className="font-semibold">🛡️ ಮುನ್ನೆಚ್ಚರಿಕೆ ಸಲಹೆಗಳು:</span> ಸಾಮಾನ್ಯ ಮುನ್ನೆಚ್ಚರಿಕೆ: ಬೆಳೆಯ ಪರಿವರ್ತನೆ, ಸರಿಯಾದ ಅಂತರ, ಹೊಲ ಸ್ವಚ್ಛತೆ, ಪ್ರತಿರೋಧಕ ಜಾತಿಗಳು.</p>
                       </div>
                     </div>
 
-                    {/* Prevention */}
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-foreground flex items-center gap-2 text-base">
-                        <Lightbulb className="h-5 w-5 text-accent" />
-                        🛡️ Prevention Tips
-                      </h4>
-                      <div className="text-sm bg-accent/10 p-4 rounded-xl whitespace-pre-line leading-relaxed border-l-4 border-accent">
-                        {detectionResult.preventive_tips}
+                    {/* 🟠 HINDI Section */}
+                    <div className="space-y-2 border-l-4 border-orange-500 pl-3 bg-orange-50 dark:bg-orange-950/20 p-3 rounded-r-xl">
+                      <h4 className="font-bold text-orange-700 dark:text-orange-400 text-base">🟠 हिंदी (Hindi)</h4>
+                      <div className="space-y-1 text-sm">
+                        <p><span className="font-semibold">🔍 हमने क्या पाया:</span> {detectionResult.description.hindi}</p>
+                        <p><span className="font-semibold">💊 उपचार और समाधान:</span> {detectionResult.solutions.hindi}</p>
+                        <p><span className="font-semibold">🛡️ रोकथाम सुझाव:</span> सामान्य रोकथाम: फसल चक्रीकरण, उचित दूरी, खेत स्वच्छता, रोग-प्रतिरोधी किस्में।</p>
                       </div>
                     </div>
 
