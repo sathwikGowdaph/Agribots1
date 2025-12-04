@@ -150,6 +150,181 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_cache_metadata: {
+        Row: {
+          cached_at: string | null
+          id: string
+          lesson_id: string | null
+          sync_status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cached_at?: string | null
+          id?: string
+          lesson_id?: string | null
+          sync_status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cached_at?: string | null
+          id?: string
+          lesson_id?: string | null
+          sync_status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_cache_metadata_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          audio_url: string | null
+          content: string
+          content_hi: string | null
+          content_kn: string | null
+          created_at: string
+          crop_type: string | null
+          difficulty_level: string | null
+          duration_seconds: number | null
+          id: string
+          lesson_type: string
+          region: string | null
+          slides: Json | null
+          tags: string[] | null
+          title: string
+          title_hi: string | null
+          title_kn: string | null
+          updated_at: string
+        }
+        Insert: {
+          audio_url?: string | null
+          content: string
+          content_hi?: string | null
+          content_kn?: string | null
+          created_at?: string
+          crop_type?: string | null
+          difficulty_level?: string | null
+          duration_seconds?: number | null
+          id?: string
+          lesson_type?: string
+          region?: string | null
+          slides?: Json | null
+          tags?: string[] | null
+          title: string
+          title_hi?: string | null
+          title_kn?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string | null
+          content?: string
+          content_hi?: string | null
+          content_kn?: string | null
+          created_at?: string
+          crop_type?: string | null
+          difficulty_level?: string | null
+          duration_seconds?: number | null
+          id?: string
+          lesson_type?: string
+          region?: string | null
+          slides?: Json | null
+          tags?: string[] | null
+          title?: string
+          title_hi?: string | null
+          title_kn?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      qa_history: {
+        Row: {
+          answer: string
+          answer_hi: string | null
+          answer_kn: string | null
+          created_at: string
+          crop_type: string | null
+          id: string
+          question: string
+          question_hi: string | null
+          question_kn: string | null
+          source_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          answer: string
+          answer_hi?: string | null
+          answer_kn?: string | null
+          created_at?: string
+          crop_type?: string | null
+          id?: string
+          question: string
+          question_hi?: string | null
+          question_kn?: string | null
+          source_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          answer?: string
+          answer_hi?: string | null
+          answer_kn?: string | null
+          created_at?: string
+          crop_type?: string | null
+          id?: string
+          question?: string
+          question_hi?: string | null
+          question_kn?: string | null
+          source_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_learning_progress: {
+        Row: {
+          completed: boolean | null
+          created_at: string
+          id: string
+          last_accessed_at: string | null
+          lesson_id: string | null
+          score: number | null
+          time_spent_seconds: number | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          last_accessed_at?: string | null
+          lesson_id?: string | null
+          score?: number | null
+          time_spent_seconds?: number | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          last_accessed_at?: string | null
+          lesson_id?: string | null
+          score?: number | null
+          time_spent_seconds?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_learning_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

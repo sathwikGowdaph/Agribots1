@@ -5,6 +5,7 @@ import DetectionSection from '@/components/DetectionSection';
 import AgribotChat from '@/components/AgribotChat';
 import CommunitySection from '@/components/CommunitySection';
 import FeaturesSection from '@/components/FeaturesSection';
+import EducationSection from '@/components/education/EducationSection';
 import MobileNavBar from '@/components/MobileNavBar';
 import { translations } from '@/translations';
 
@@ -39,6 +40,11 @@ const Index = () => {
         />
         
         <DetectionSection translations={currentTranslations} currentLanguage={currentLanguage} />
+        
+        <EducationSection 
+          currentLanguage={currentLanguage} 
+          translations={currentTranslations} 
+        />
         
         <section id="chatbot" className="py-12 md:py-20 bg-background">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
