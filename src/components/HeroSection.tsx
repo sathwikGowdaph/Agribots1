@@ -1,5 +1,6 @@
 import React from 'react';
-import { Camera, Scan, Users, Zap } from 'lucide-react';
+import { Scan, Users, Zap } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import farmerHeroBg from '@/assets/farmer-hero-bg.jpg';
@@ -34,7 +35,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ translations, onStartDetectio
           </div>
 
           {/* Features Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-12">
             <Card className="bg-white/10 backdrop-blur-sm border-white/20 p-4 text-center">
               <Scan className="h-8 w-8 text-accent mx-auto mb-2" />
               <h3 className="font-semibold text-white text-sm">
@@ -51,12 +52,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({ translations, onStartDetectio
               <Users className="h-8 w-8 text-accent mx-auto mb-2" />
               <h3 className="font-semibold text-white text-sm">
                 {translations.hero.features.community}
-              </h3>
-            </Card>
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20 p-4 text-center">
-              <Camera className="h-8 w-8 text-accent mx-auto mb-2" />
-              <h3 className="font-semibold text-white text-sm">
-                {translations.hero.features.offlineMode}
               </h3>
             </Card>
           </div>

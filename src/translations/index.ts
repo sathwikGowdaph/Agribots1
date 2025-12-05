@@ -15,7 +15,6 @@ export const translations = {
         aiDetection: "AI Detection",
         instantResults: "Instant Results",
         community: "Community Support",
-        offlineMode: "Offline Ready",
       },
       cta: {
         primary: "Start Detection",
@@ -60,10 +59,6 @@ export const translations = {
           title: "Multilingual Support",
           description: "Available in Hindi, Kannada, and English for better accessibility.",
         },
-        offline: {
-          title: "Offline Capability",
-          description: "Works without internet connection, perfect for rural areas.",
-        },
         community: {
           title: "Expert Community",
           description: "Get advice from agricultural experts and experienced farmers.",
@@ -94,7 +89,6 @@ export const translations = {
         aiDetection: "AI पहचान",
         instantResults: "तत्काल परिणाम",
         community: "समुदाय समर्थन",
-        offlineMode: "ऑफलाइन तैयार",
       },
       cta: {
         primary: "पहचान शुरू करें",
@@ -139,10 +133,6 @@ export const translations = {
           title: "बहुभाषी समर्थन",
           description: "बेहतर पहुंच के लिए हिंदी, कन्नड़ और अंग्रेजी में उपलब्ध।",
         },
-        offline: {
-          title: "ऑफलाइन क्षमता",
-          description: "इंटरनेट कनेक्शन के बिना काम करता है, ग्रामीण क्षेत्रों के लिए परफेक्ट।",
-        },
         community: {
           title: "विशेषज्ञ समुदाय",
           description: "कृषि विशेषज्ञों और अनुभवी किसानों से सलाह लें।",
@@ -173,7 +163,6 @@ export const translations = {
         aiDetection: "AI ಪತ್ತೆ",
         instantResults: "ತ್ವರಿತ ಫಲಿತಾಂಶಗಳು",
         community: "ಸಮುದಾಯ ಬೆಂಬಲ",
-        offlineMode: "ಆಫ್‌ಲೈನ್ ಸಿದ್ಧ",
       },
       cta: {
         primary: "ಪತ್ತೆ ಪ್ರಾರಂಭಿಸಿ",
@@ -217,10 +206,6 @@ export const translations = {
         multilingual: {
           title: "ಬಹುಭಾಷೆ ಬೆಂಬಲ",
           description: "ಉತ್ತಮ ಪ್ರವೇಶಕ್ಕಾಗಿ ಹಿಂದಿ, ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಲಭ್ಯವಿದೆ.",
-        },
-        offline: {
-          title: "ಆಫ್‌ಲೈನ್ ಸಾಮರ್ಥ್ಯ",
-          description: "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲದೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ, ಗ್ರಾಮೀಣ ಪ್ರದೇಶಗಳಿಗೆ ಪರಿಪೂರ್ಣ.",
         },
         community: {
           title: "ತಜ್ಞ ಸಮುದಾಯ",

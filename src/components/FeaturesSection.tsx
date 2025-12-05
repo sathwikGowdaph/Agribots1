@@ -1,5 +1,5 @@
 import React from 'react';
-import { Brain, Globe, Wifi, Users2, Smartphone, Shield } from 'lucide-react';
+import { Brain, Globe, Users2, Smartphone, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface FeaturesSectionProps {
@@ -21,13 +21,6 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ translations }) => {
       description: translations.features.items.multilingual.description,
       color: "text-accent",
       bgColor: "bg-accent/10",
-    },
-    {
-      icon: Wifi,
-      title: translations.features.items.offline.title,
-      description: translations.features.items.offline.description,
-      color: "text-success",
-      bgColor: "bg-success/10",
     },
     {
       icon: Users2,
@@ -120,7 +113,7 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ translations }) => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="w-2 h-2 bg-accent rounded-full" />
-                  <span>Works offline</span>
+                  <span>Multilingual support</span>
                 </div>
               </div>
             </div>
