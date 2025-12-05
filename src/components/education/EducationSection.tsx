@@ -23,7 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface EducationSectionProps {
   currentLanguage: string;
-  translations: Record<string, string>;
+  translations: Record<string, unknown>;
 }
 
 // Crop types for lesson generation
