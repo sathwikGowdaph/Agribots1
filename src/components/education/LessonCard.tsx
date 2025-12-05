@@ -129,7 +129,7 @@ const LessonCard: React.FC<LessonCardProps> = ({
                 size="sm"
                 onClick={() => onCache(lesson)}
                 className={isCached ? 'text-green-600' : ''}
-                title={isCached ? 'Cached for offline' : 'Save for offline'}
+                title={isCached ? 'Saved' : 'Save for later'}
               >
                 <Download className={`h-4 w-4 ${isCached ? 'fill-current' : ''}`} />
               </Button>

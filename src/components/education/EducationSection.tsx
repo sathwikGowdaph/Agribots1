@@ -8,8 +8,6 @@ import {
   GraduationCap, 
   MessageCircle, 
   Download,
-  Wifi,
-  WifiOff,
   RefreshCw,
   Loader2,
   Sparkles
@@ -77,7 +75,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
   const generateLesson = useCallback(async () => {
     if (!isOnline) {
       toast({
-        title: currentLanguage === 'hi' ? 'ऑफ़लाइन' : currentLanguage === 'kn' ? 'ಆಫ್‌ಲೈನ್' : 'Offline',
+        title: currentLanguage === 'hi' ? 'कनेक्शन आवश्यक' : currentLanguage === 'kn' ? 'ಸಂಪರ್ಕ ಅಗತ್ಯ' : 'Connection Required',
         description: currentLanguage === 'hi' 
           ? 'नया पाठ बनाने के लिए इंटरनेट चाहिए' 
           : currentLanguage === 'kn'
@@ -156,17 +154,17 @@ const EducationSection: React.FC<EducationSectionProps> = ({
     setActiveLesson(lesson);
   };
 
-  // Cache a lesson for offline use
+  // Cache a lesson for later use
   const handleCacheLesson = (lesson: CachedLesson) => {
     const success = cacheLesson(lesson);
     if (success) {
       toast({
         title: '📥 ' + (currentLanguage === 'hi' ? 'सहेजा गया' : currentLanguage === 'kn' ? 'ಉಳಿಸಲಾಗಿದೆ' : 'Saved'),
         description: currentLanguage === 'hi' 
-          ? 'ऑफ़लाइन उपयोग के लिए सहेजा गया' 
+          ? 'बाद में देखने के लिए सहेजा गया' 
           : currentLanguage === 'kn'
-          ? 'ಆಫ್‌ಲೈನ್ ಬಳಕೆಗಾಗಿ ಉಳಿಸಲಾಗಿದೆ'
-          : 'Saved for offline use',
+          ? 'ನಂತರ ವೀಕ್ಷಣೆಗಾಗಿ ಉಳಿಸಲಾಗಿದೆ'
+          : 'Saved for later viewing',
       });
     }
   };
@@ -190,22 +188,11 @@ const EducationSection: React.FC<EducationSectionProps> = ({
               : 'Learn farming with AI - in your language, for your crops'}
           </p>
           
-          {/* Online/Offline Status */}
+          {/* Saved Lessons Count */}
           <div className="flex items-center justify-center gap-2 mt-4">
-            {isOnline ? (
-              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                <Wifi className="h-3 w-3 mr-1" />
-                {currentLanguage === 'hi' ? 'ऑनलाइन' : currentLanguage === 'kn' ? 'ಆನ್‌ಲೈನ್' : 'Online'}
-              </Badge>
-            ) : (
-              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                <WifiOff className="h-3 w-3 mr-1" />
-                {currentLanguage === 'hi' ? 'ऑफ़लाइन' : currentLanguage === 'kn' ? 'ಆಫ್‌ಲೈನ್' : 'Offline'}
-              </Badge>
-            )}
             <Badge variant="outline">
               <Download className="h-3 w-3 mr-1" />
-              {cachedLessons.length}/{maxCacheSize} {currentLanguage === 'hi' ? 'सहेजे गए' : currentLanguage === 'kn' ? 'ಉಳಿಸಲಾಗಿದೆ' : 'cached'}
+              {cachedLessons.length}/{maxCacheSize} {currentLanguage === 'hi' ? 'सहेजे गए' : currentLanguage === 'kn' ? 'ಉಳಿಸಲಾಗಿದೆ' : 'saved'}
             </Badge>
           </div>
         </div>
