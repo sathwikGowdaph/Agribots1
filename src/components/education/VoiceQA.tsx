@@ -20,7 +20,7 @@ interface Message {
 interface VoiceQAProps {
   currentLanguage: string;
   cropType?: string;
-  translations: Record<string, string>;
+  translations: Record<string, unknown>;
 }
 
 const VoiceQA: React.FC<VoiceQAProps> = ({

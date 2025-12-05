@@ -11,9 +11,3 @@ verify_jwt = false
 
 [functions.education-qa]
 verify_jwt = false
-
-[functions.agribot-chat]
-verify_jwt = false
-
-[functions.detect-disease]
-verify_jwt = false
