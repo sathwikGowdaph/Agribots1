@@ -19,12 +19,9 @@ Agribot AI is an AI-driven agriculture platform designed to help farmers:
 Agribot bridges the gap between technology and agriculture, making advanced tools simple, accessible, and powerful for every farmer globally.
 
 🧠 Why Agribot Matters
-Problem Farmers Face	Agribot Solution
-Crop diseases go unnoticed	Instant AI image detection
-Lack of expert guidance	Step-by-step treatment & prevention
-Language barriers	Multilingual support
-Expensive expert visits	Free intelligent platform
-Missing community support	Built-in farming discussion hub
+🌱 Agribot bridges the gap between technology and agriculture, making advanced tools simple, accessible, and powerful for every farmer globally.
+
+Our mission is not just to detect diseases — but to educate, empower, and uplift farming communities with knowledge that improves decisions, increases yields, and builds sustainable agriculture.
 🎯 Core Features
 
 ✔️ AI Crop Disease Detection
@@ -108,7 +105,7 @@ If you want to support AI for Agriculture, give this project a:
 👥 Join farmer community: Discord (coming soon)
 
 <div align="center">
-🌾 "When Farmers Grow, the World Eats. Technology Can Make That Growth Smarter."
+🌾 Agribot isn’t just a tool — it’s a digital farming companion that teaches, supports, and grows with the farmer.
 — Agribot AI Team
 
 👍 If this project inspires you, star it and follow for updates!
