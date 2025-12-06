@@ -87,7 +87,7 @@ We welcome:
 
 To contribute:
 
-git clone https://github.com/YOURUSERNAME/agribot-AI.git
+git clone https://github.com/sathwikGowdaph/agribot-AI.git
 cd agribot-AI
 npm install
 npm start
@@ -102,7 +102,7 @@ If you want to support AI for Agriculture, give this project a:
 
 💬 Contact & Community
 
-📨 Email: coming-soon@mail.com
+📨 Email: sathwikgowdaph@gmail.com
 
 🌐 Website: Coming soon
 👥 Join farmer community: Discord (coming soon)
