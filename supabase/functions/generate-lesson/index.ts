@@ -5,14 +5,28 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Get current season based on month
+function getCurrentSeason(): string {
+  const month = new Date().getMonth() + 1; // 1-12
+  if (month >= 6 && month <= 10) return 'kharif'; // June-October (Monsoon)
+  if (month >= 11 || month <= 2) return 'rabi'; // November-February (Winter)
+  return 'zaid'; // March-May (Summer)
+}
+
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { cropType, region, diseaseHistory, difficulty, lessonType } = await req.json();
+    const { 
+      cropType, 
+      region = 'India', 
+      season,
+      diseaseHistory = [], 
+      difficulty = 'beginner', 
+      lessonType = 'general' 
+    } = await req.json();
     
     // Input validation
     if (!cropType || typeof cropType !== 'string' || cropType.length > 100) {
@@ -27,7 +41,12 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    console.log('Generating lesson for:', { cropType, region, difficulty, lessonType });
+    const currentSeason = season || getCurrentSeason();
+    const diseaseContext = diseaseHistory.length > 0 
+      ? `Recent disease detections: ${diseaseHistory.slice(0, 3).join(', ')}` 
+      : 'No recent disease history';
+
+    console.log('Generating personalized lesson:', { cropType, region, currentSeason, difficulty, lessonType });
 
     const systemPrompt = `You are AgriBot Education AI - a friendly farming teacher for Indian farmers and agriculture students.
 
@@ -39,13 +58,27 @@ CRITICAL RULES:
 3. Add relevant emojis for visual clarity
 4. Structure content for easy reading and listening
 5. Provide content in ALL THREE languages: English, Hindi, and Kannada
+6. PERSONALIZE content based on region and season
 
 LESSON CONTEXT:
 - Crop: ${cropType}
-- Region: ${region || 'India'}
-- Disease History: ${diseaseHistory || 'None specified'}
-- Difficulty: ${difficulty || 'beginner'}
-- Lesson Type: ${lessonType || 'general'}
+- Region: ${region}
+- Season: ${currentSeason} (adjust advice accordingly!)
+- ${diseaseContext}
+- Difficulty: ${difficulty}
+- Lesson Type: ${lessonType}
+
+REGIONAL CONSIDERATIONS:
+- Karnataka: Kannada language primary, red soil common
+- Maharashtra: Marathi influence, black soil areas
+- Punjab: Wheat/rice focused, canal irrigation
+- Tamil Nadu: Tropical, paddy focus
+- Andhra Pradesh: Chili/cotton areas
+
+SEASONAL CONSIDERATIONS:
+- Kharif (June-Oct): Monsoon crops, waterlogging risks, fungal diseases common
+- Rabi (Nov-Feb): Winter crops, frost protection, less pests
+- Zaid (Mar-May): Summer crops, irrigation critical, heat stress
 
 OUTPUT FORMAT (JSON):
 {
@@ -61,6 +94,9 @@ OUTPUT FORMAT (JSON):
   "practicalTip": "One actionable tip in English",
   "practicalTip_hi": "Same tip in Hindi",
   "practicalTip_kn": "Same tip in Kannada",
+  "seasonalAdvice": "Specific advice for current season",
+  "seasonalAdvice_hi": "Hindi version",
+  "seasonalAdvice_kn": "Kannada version",
   "slides": [
     {
       "title": "Slide title",
@@ -73,8 +109,8 @@ OUTPUT FORMAT (JSON):
   ]
 }
 
-Generate 3-4 slides for animated lesson presentation. Each slide should be readable in 6-10 seconds.
-Make content relevant to Indian farming conditions and practices.`;
+Generate 4-5 slides for animated lesson presentation. Each slide should be readable in 6-10 seconds.
+Make content SPECIFIC to the region, season, and any disease history provided.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -88,7 +124,7 @@ Make content relevant to Indian farming conditions and practices.`;
           { role: 'system', content: systemPrompt },
           { 
             role: 'user', 
-            content: `Generate a micro-lesson about ${lessonType || 'best practices'} for ${cropType} farming. Focus on practical knowledge farmers can apply today.`
+            content: `Generate a personalized micro-lesson about ${lessonType} for ${cropType} farming in ${region} during ${currentSeason} season. ${diseaseHistory.length > 0 ? `The farmer recently detected: ${diseaseHistory.join(', ')}. Include prevention tips.` : ''} Focus on practical knowledge farmers can apply today.`
           }
         ],
         temperature: 0.7,
@@ -131,11 +167,10 @@ Make content relevant to Indian farming conditions and practices.`;
       }
     } catch (parseError) {
       console.error('Parse error:', parseError);
-      // Return a structured fallback
       lessonData = {
-        title: `${cropType} Farming Tips`,
-        title_hi: `${cropType} खेती के टिप्स`,
-        title_kn: `${cropType} ಕೃಷಿ ಸಲಹೆಗಳು`,
+        title: `${cropType} Farming Tips for ${currentSeason}`,
+        title_hi: `${currentSeason} के लिए ${cropType} खेती के टिप्स`,
+        title_kn: `${currentSeason}ಕ್ಕೆ ${cropType} ಕೃಷಿ ಸಲಹೆಗಳು`,
         content: content,
         content_hi: content,
         content_kn: content,
@@ -147,12 +182,14 @@ Make content relevant to Indian farming conditions and practices.`;
     // Add metadata
     lessonData.cropType = cropType;
     lessonData.region = region;
-    lessonData.difficulty = difficulty || 'beginner';
-    lessonData.lessonType = lessonType || 'general';
-    lessonData.durationSeconds = (lessonData.slides?.length || 3) * 10;
+    lessonData.season = currentSeason;
+    lessonData.difficulty = difficulty;
+    lessonData.lessonType = lessonType;
+    lessonData.durationSeconds = (lessonData.slides?.length || 4) * 10;
     lessonData.generatedAt = new Date().toISOString();
+    lessonData.personalized = true;
 
-    console.log('Lesson generated successfully:', lessonData.title);
+    console.log('Personalized lesson generated successfully:', lessonData.title);
 
     return new Response(JSON.stringify(lessonData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
