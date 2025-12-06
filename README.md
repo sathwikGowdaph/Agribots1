@@ -1,73 +1,114 @@
-# Welcome to your Lovable project
+🌾🤖 Agribot AI — Smart Farming, Smarter Future
 
-## Project info
+AI-Powered Pest Detection + Farmer Education + Community Support
+A modern web platform that empowers farmers with instant disease detection, practical farming insights, multilingual support, and a community-driven knowledge ecosystem.
 
-**URL**: https://lovable.dev/projects/10cebcf6-6b74-4cc4-accb-a78e2b3faac6
+<div align="center"> <img src="https://img.shields.io/badge/AI%20Pest%20Detection-Enabled-success?style=for-the-badge"/> <img src="https://img.shields.io/badge/Farmer%20Friendly-Yes-green?style=for-the-badge"/> <img src="https://img.shields.io/badge/Language%20Support-Multilingual-blue?style=for-the-badge"/> <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge"/> </div>
+🚀 What is Agribot AI?
 
-## How can I edit this code?
+Agribot AI is an AI-driven agriculture platform designed to help farmers:
 
-There are several ways of editing your application.
+📷 Detect crop diseases instantly using AI
 
-**Use Lovable**
+🌱 Learn proper treatment, prevention & safe farming practices
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/10cebcf6-6b74-4cc4-accb-a78e2b3faac6) and start prompting.
+🌍 Access community discussions & expert guidance
 
-Changes made via Lovable will be committed automatically to this repo.
+🗣 Use in their own language: English | Hindi | Kannada (more coming)
 
-**Use your preferred IDE**
+Agribot bridges the gap between technology and agriculture, making advanced tools simple, accessible, and powerful for every farmer globally.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+🧠 Why Agribot Matters
+Problem Farmers Face	Agribot Solution
+Crop diseases go unnoticed	Instant AI image detection
+Lack of expert guidance	Step-by-step treatment & prevention
+Language barriers	Multilingual support
+Expensive expert visits	Free intelligent platform
+Missing community support	Built-in farming discussion hub
+🎯 Core Features
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+✔️ AI Crop Disease Detection
+✔️ Instant Results with Confidence Level (%)
+✔️ Treatment & Organic Solution Recommendations
+✔️ Pest & Disease Database (Searchable)
+✔️ Multilingual Voice + Text Support
+✔️ Community Q&A for Farmers
+✔️ Farmer-Friendly UI with Offline Memory for Recent Scans
 
-Follow these steps:
+👀 Live Demo
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+🔗 Coming Soon / Host Link Placeholder
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+(Upload preview GIF or screenshot here)
 
-# Step 3: Install the necessary dependencies.
-npm i
+🛠 Tech Stack
+Category	Tools
+Frontend	HTML, CSS, JavaScript
+Backend	Node.js / Firebase / Python (depending on your setup)
+AI/ML Model	TensorFlow / Teachable Machine / Custom CNN
+Storage	Firebase / Cloud Storage
+Deployment	Vercel / Netlify / GitHub Pages
+Languages	English, Hindi, Kannada (More coming soon...)
+📸 How It Works
+1️⃣ Upload or Capture Crop Leaf Image
+2️⃣ Agribot AI Analyses Disease
+3️⃣ Shows Name, Description & Accuracy Score
+4️⃣ Provides Treatment Steps & Prevention Tips
+5️⃣ Saves Record for Learning & Reference
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+📚 Example Output
+🛑 Disease Detected: Leaf Blight (92% Confidence)
 
-**Edit a file directly in GitHub**
+📌 Treatment:
+- Apply Carbendazim or Copper Oxychloride spray
+- Remove infected leaves immediately
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+🌱 Prevention:
+- Maintain spacing between plants
+- Ensure proper field drainage
 
-**Use GitHub Codespaces**
+🗺 Roadmap
+Status	Feature
+🟢 Done	Image-based pest detection
+🟡 In progress	Voice-based chatbot for farmers
+🔵 Planned	Smart calendar for irrigation, fertilizer & weather alerts
+🔥 Future	IoT sensor integration & farm analytics dashboard
+🤝 Contributing
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+We welcome:
 
-## What technologies are used for this project?
+🌱 New pest/disease datasets
 
-This project is built with:
+🌍 Language contributors
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+🚜 Farmer community partnerships
 
-## How can I deploy this project?
+🔧 Feature improvements
 
-Simply open [Lovable](https://lovable.dev/projects/10cebcf6-6b74-4cc4-accb-a78e2b3faac6) and click on Share -> Publish.
+To contribute:
 
-## Can I connect a custom domain to my Lovable project?
+git clone https://github.com/YOURUSERNAME/agribot-AI.git
+cd agribot-AI
+npm install
+npm start
 
-Yes, you can!
+⭐ Support the Mission
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+If you want to support AI for Agriculture, give this project a:
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+🌟 Star
+🍴 Fork
+📢 Share with a farmer or student
+
+💬 Contact & Community
+
+📨 Email: coming-soon@mail.com
+
+🌐 Website: Coming soon
+👥 Join farmer community: Discord (coming soon)
+
+<div align="center">
+🌾 "When Farmers Grow, the World Eats. Technology Can Make That Growth Smarter."
+— Agribot AI Team
+
+👍 If this project inspires you, star it and follow for updates!
