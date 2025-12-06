@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.education-qa]
 verify_jwt = false
+
+[functions.generate-quiz]
+verify_jwt = false

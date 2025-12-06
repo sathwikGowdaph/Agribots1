@@ -8,13 +8,15 @@ import {
   GraduationCap, 
   MessageCircle, 
   Download,
-  RefreshCw,
   Loader2,
-  Sparkles
+  Sparkles,
+  Brain
 } from 'lucide-react';
 import LessonCard from './LessonCard';
 import LessonPlayer from './LessonPlayer';
 import VoiceQA from './VoiceQA';
+import QuizSection from './QuizSection';
+import PersonalizationPanel from './PersonalizationPanel';
 import { useOfflineCache, CachedLesson } from '@/hooks/useOfflineCache';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -24,29 +26,33 @@ interface EducationSectionProps {
   translations: Record<string, unknown>;
 }
 
-// Crop types for lesson generation
-const CROP_TYPES = [
-  { id: 'tomato', emoji: '🍅', en: 'Tomato', hi: 'टमाटर', kn: 'ಟೊಮೆಟೊ' },
-  { id: 'potato', emoji: '🥔', en: 'Potato', hi: 'आलू', kn: 'ಆಲೂಗಡ್ಡೆ' },
-  { id: 'rice', emoji: '🌾', en: 'Rice/Paddy', hi: 'धान', kn: 'ಭತ್ತ' },
-  { id: 'chili', emoji: '🌶️', en: 'Chili', hi: 'मिर्च', kn: 'ಮೆಣಸಿನಕಾಯಿ' },
-  { id: 'cotton', emoji: '🏵️', en: 'Cotton', hi: 'कपास', kn: 'ಹತ್ತಿ' },
-  { id: 'mango', emoji: '🥭', en: 'Mango', hi: 'आम', kn: 'ಮಾವು' },
-  { id: 'banana', emoji: '🍌', en: 'Banana', hi: 'केला', kn: 'ಬಾಳೆಹಣ್ಣು' },
-];
-
 const LESSON_TYPES = [
   { id: 'pest', en: 'Pest Control', hi: 'कीट नियंत्रण', kn: 'ಕೀಟ ನಿಯಂತ್ರಣ' },
   { id: 'disease', en: 'Disease Management', hi: 'रोग प्रबंधन', kn: 'ರೋಗ ನಿರ್ವಹಣೆ' },
   { id: 'prevention', en: 'Prevention Tips', hi: 'रोकथाम सुझाव', kn: 'ತಡೆಗಟ್ಟುವಿಕೆ ಸಲಹೆಗಳು' },
   { id: 'general', en: 'Best Practices', hi: 'सर्वोत्तम अभ्यास', kn: 'ಅತ್ಯುತ್ತಮ ಅಭ್ಯಾಸಗಳು' },
+  { id: 'seasonal', en: 'Seasonal Care', hi: 'मौसमी देखभाल', kn: 'ಋತುಮಾನದ ಆರೈಕೆ' },
 ];
+
+// Get current season
+function getCurrentSeason(): string {
+  const month = new Date().getMonth() + 1;
+  if (month >= 6 && month <= 10) return 'kharif';
+  if (month >= 11 || month <= 2) return 'rabi';
+  return 'zaid';
+}
 
 const EducationSection: React.FC<EducationSectionProps> = ({
   currentLanguage,
   translations,
 }) => {
+  // Personalization state
   const [selectedCrop, setSelectedCrop] = useState<string>('tomato');
+  const [selectedRegion, setSelectedRegion] = useState<string>('karnataka');
+  const [selectedSeason, setSelectedSeason] = useState<string>(getCurrentSeason());
+  const [recentDiseases, setRecentDiseases] = useState<string[]>([]);
+  
+  // Lesson state
   const [selectedLessonType, setSelectedLessonType] = useState<string>('general');
   const [lessons, setLessons] = useState<CachedLesson[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -71,7 +77,31 @@ const EducationSection: React.FC<EducationSectionProps> = ({
     }
   };
 
-  // Generate a new lesson
+  // Load recent disease detections for personalization
+  useEffect(() => {
+    const loadDiseaseHistory = async () => {
+      try {
+        const { data } = await supabase
+          .from('detection_history')
+          .select('detection_result')
+          .order('created_at', { ascending: false })
+          .limit(5);
+        
+        if (data) {
+          const diseases = data
+            .map((d: any) => d.detection_result?.issue)
+            .filter(Boolean)
+            .slice(0, 3);
+          setRecentDiseases(diseases);
+        }
+      } catch (error) {
+        console.log('Could not load disease history');
+      }
+    };
+    loadDiseaseHistory();
+  }, []);
+
+  // Generate a new personalized lesson
   const generateLesson = useCallback(async () => {
     if (!isOnline) {
       toast({
@@ -92,9 +122,11 @@ const EducationSection: React.FC<EducationSectionProps> = ({
       const { data, error } = await supabase.functions.invoke('generate-lesson', {
         body: {
           cropType: selectedCrop,
+          region: selectedRegion,
+          season: selectedSeason,
+          diseaseHistory: recentDiseases,
           lessonType: selectedLessonType,
           difficulty: 'beginner',
-          region: 'India',
         },
       });
 
@@ -111,15 +143,20 @@ const EducationSection: React.FC<EducationSectionProps> = ({
         cropType: selectedCrop,
         slides: data.slides,
         keyPoints: data.keyPoints,
+        keyPoints_hi: data.keyPoints_hi,
+        keyPoints_kn: data.keyPoints_kn,
         practicalTip: data.practicalTip,
+        practicalTip_hi: data.practicalTip_hi,
+        practicalTip_kn: data.practicalTip_kn,
+        seasonalAdvice: data.seasonalAdvice,
         cachedAt: new Date().toISOString(),
         lessonType: selectedLessonType,
         difficulty: 'beginner',
+        region: selectedRegion,
+        season: selectedSeason,
       };
 
       setLessons((prev) => [newLesson, ...prev]);
-      
-      // Auto-cache the lesson
       cacheLesson(newLesson);
 
       toast({
@@ -140,7 +177,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
     } finally {
       setIsGenerating(false);
     }
-  }, [isOnline, selectedCrop, selectedLessonType, currentLanguage, cacheLesson, toast]);
+  }, [isOnline, selectedCrop, selectedRegion, selectedSeason, selectedLessonType, recentDiseases, currentLanguage, cacheLesson, toast]);
 
   // Load cached lessons on mount
   useEffect(() => {
@@ -149,24 +186,13 @@ const EducationSection: React.FC<EducationSectionProps> = ({
     }
   }, [cachedLessons]);
 
-  // Play a lesson
-  const handlePlayLesson = (lesson: CachedLesson) => {
-    setActiveLesson(lesson);
-  };
-
-  // Cache a lesson for later use
-  const handleCacheLesson = (lesson: CachedLesson) => {
-    const success = cacheLesson(lesson);
-    if (success) {
-      toast({
-        title: '📥 ' + (currentLanguage === 'hi' ? 'सहेजा गया' : currentLanguage === 'kn' ? 'ಉಳಿಸಲಾಗಿದೆ' : 'Saved'),
-        description: currentLanguage === 'hi' 
-          ? 'बाद में देखने के लिए सहेजा गया' 
-          : currentLanguage === 'kn'
-          ? 'ನಂತರ ವೀಕ್ಷಣೆಗಾಗಿ ಉಳಿಸಲಾಗಿದೆ'
-          : 'Saved for later viewing',
-      });
-    }
+  // Handle quiz completion
+  const handleQuizComplete = (score: number, total: number) => {
+    const percentage = Math.round((score / total) * 100);
+    toast({
+      title: percentage >= 80 ? '🏆 ' : '📚 ' + (currentLanguage === 'hi' ? 'क्विज़ पूरा!' : currentLanguage === 'kn' ? 'ಕ್ವಿಜ್ ಪೂರ್ಣ!' : 'Quiz Complete!'),
+      description: `${score}/${total} (${percentage}%)`,
+    });
   };
 
   return (
@@ -182,13 +208,12 @@ const EducationSection: React.FC<EducationSectionProps> = ({
           </div>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             {currentLanguage === 'hi' 
-              ? 'खेती सीखें AI की मदद से - आपकी भाषा में, आपकी फसल के लिए' 
+              ? 'आपकी फसल, आपके क्षेत्र और मौसम के अनुसार व्यक्तिगत पाठ' 
               : currentLanguage === 'kn'
-              ? 'AI ಸಹಾಯದಿಂದ ಕೃಷಿ ಕಲಿಯಿರಿ - ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ, ನಿಮ್ಮ ಬೆಳೆಗೆ'
-              : 'Learn farming with AI - in your language, for your crops'}
+              ? 'ನಿಮ್ಮ ಬೆಳೆ, ಪ್ರದೇಶ ಮತ್ತು ಋತುವಿಗೆ ಅನುಗುಣವಾದ ವೈಯಕ್ತಿಕ ಪಾಠಗಳು'
+              : 'Personalized lessons for your crop, region, and season'}
           </p>
           
-          {/* Saved Lessons Count */}
           <div className="flex items-center justify-center gap-2 mt-4">
             <Badge variant="outline">
               <Download className="h-3 w-3 mr-1" />
@@ -196,6 +221,18 @@ const EducationSection: React.FC<EducationSectionProps> = ({
             </Badge>
           </div>
         </div>
+
+        {/* Personalization Panel */}
+        <PersonalizationPanel
+          currentLanguage={currentLanguage}
+          selectedCrop={selectedCrop}
+          selectedRegion={selectedRegion}
+          selectedSeason={selectedSeason}
+          recentDiseases={recentDiseases}
+          onCropChange={setSelectedCrop}
+          onRegionChange={setSelectedRegion}
+          onSeasonChange={setSelectedSeason}
+        />
 
         {/* Active Lesson Player */}
         {activeLesson && (
@@ -215,10 +252,14 @@ const EducationSection: React.FC<EducationSectionProps> = ({
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-6">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto mb-6">
             <TabsTrigger value="lessons" className="gap-2">
               <BookOpen className="h-4 w-4" />
               {currentLanguage === 'hi' ? 'पाठ' : currentLanguage === 'kn' ? 'ಪಾಠಗಳು' : 'Lessons'}
+            </TabsTrigger>
+            <TabsTrigger value="quiz" className="gap-2">
+              <Brain className="h-4 w-4" />
+              {currentLanguage === 'hi' ? 'क्विज़' : currentLanguage === 'kn' ? 'ಕ್ವಿಜ್' : 'Quiz'}
             </TabsTrigger>
             <TabsTrigger value="qa" className="gap-2">
               <MessageCircle className="h-4 w-4" />
@@ -237,26 +278,6 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Crop Selection */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    {currentLanguage === 'hi' ? 'फसल चुनें' : currentLanguage === 'kn' ? 'ಬೆಳೆ ಆಯ್ಕೆಮಾಡಿ' : 'Select Crop'}
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {CROP_TYPES.map((crop) => (
-                      <Button
-                        key={crop.id}
-                        variant={selectedCrop === crop.id ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setSelectedCrop(crop.id)}
-                        className="gap-1"
-                      >
-                        {crop.emoji} {getText(crop)}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Lesson Type Selection */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">
@@ -270,7 +291,12 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                         size="sm"
                         onClick={() => setSelectedLessonType(type.id)}
                       >
-                        {getText(type)}
+                        {type.id === 'pest' && '🐛'}
+                        {type.id === 'disease' && '🦠'}
+                        {type.id === 'prevention' && '🛡️'}
+                        {type.id === 'general' && '📚'}
+                        {type.id === 'seasonal' && '🌤️'}
+                        {' '}{getText(type)}
                       </Button>
                     ))}
                   </div>
@@ -292,7 +318,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                   ) : (
                     <>
                       <Sparkles className="h-5 w-5" />
-                      {currentLanguage === 'hi' ? '✨ AI पाठ बनाएं' : currentLanguage === 'kn' ? '✨ AI ಪಾಠ ರಚಿಸಿ' : '✨ Generate AI Lesson'}
+                      {currentLanguage === 'hi' ? '✨ AI पाठ बनाएं' : currentLanguage === 'kn' ? '✨ AI ಪಾಠ ರಚಿಸಿ' : '✨ Generate Personalized Lesson'}
                     </>
                   )}
                 </Button>
@@ -315,7 +341,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                       ? 'अभी कोई पाठ नहीं। ऊपर बटन दबाकर नया पाठ बनाएं!' 
                       : currentLanguage === 'kn'
                       ? 'ಇನ್ನೂ ಯಾವುದೇ ಪಾಠಗಳಿಲ್ಲ. ಹೊಸ ಪಾಠವನ್ನು ರಚಿಸಲು ಮೇಲಿನ ಬಟನ್ ಒತ್ತಿರಿ!'
-                      : 'No lessons yet. Click the button above to generate your first lesson!'}
+                      : 'No lessons yet. Click the button above to generate your first personalized lesson!'}
                   </p>
                 </Card>
               ) : (
@@ -326,13 +352,35 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                       lesson={lesson}
                       currentLanguage={currentLanguage}
                       isCached={!!getCachedLesson(lesson.id)}
-                      onPlay={handlePlayLesson}
-                      onCache={handleCacheLesson}
+                      onPlay={() => setActiveLesson(lesson)}
+                      onCache={() => {
+                        const success = cacheLesson(lesson);
+                        if (success) {
+                          toast({
+                            title: '📥 ' + (currentLanguage === 'hi' ? 'सहेजा गया' : currentLanguage === 'kn' ? 'ಉಳಿಸಲಾಗಿದೆ' : 'Saved'),
+                            description: currentLanguage === 'hi' 
+                              ? 'बाद में देखने के लिए सहेजा गया' 
+                              : currentLanguage === 'kn'
+                              ? 'ನಂತರ ವೀಕ್ಷಣೆಗಾಗಿ ಉಳಿಸಲಾಗಿದೆ'
+                              : 'Saved for later viewing',
+                          });
+                        }
+                      }}
                     />
                   ))}
                 </div>
               )}
             </div>
+          </TabsContent>
+
+          {/* Quiz Tab */}
+          <TabsContent value="quiz">
+            <QuizSection
+              currentLanguage={currentLanguage}
+              cropType={selectedCrop}
+              lessonType={selectedLessonType}
+              onComplete={handleQuizComplete}
+            />
           </TabsContent>
 
           {/* Q&A Tab */}
