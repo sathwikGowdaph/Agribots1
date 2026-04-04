@@ -1,4 +1,4 @@
-🌾🤖 Agribot AI — Smart Farming, Smarter Future
+🌾🤖 Agribot AI — Smart Farming, Smarter Future.
 
 AI-Powered Pest Detection + Farmer Education + Community Support
 A modern web platform that empowers farmers with instant disease detection, practical farming insights, multilingual support, and a community-driven knowledge ecosystem.
